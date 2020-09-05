@@ -184,17 +184,17 @@ int main()
             }
             else
             {
-                if (i == 0)
-                {
-                    waitpid(childProcessIDs[0], &wstatus1, 0);
-                }
-                else
-                {
-                    waitpid(childProcessIDs[1], &wstatus2, 0);
-                }
-                
                 if (hasPipe[i])
                 {
+                    if (i == 0)
+                    {
+                        waitpid(childProcessIDs[0], &wstatus1, 0);
+                    }
+                    else
+                    {
+                        waitpid(childProcessIDs[1], &wstatus2, 0);
+                    }
+
                     pipeProcessIDs[i] = fork();
 
                     if (pipeProcessIDs[i] == 0)
@@ -256,6 +256,10 @@ int main()
 
         if (commandsCounter == 1)
         {
+            if (!hasPipe[0])
+            {
+                waitpid(childProcessIDs[0], &wstatus1, 0);
+            }
             if (hasPipe[0])
             {
                 waitpid(pipeProcessIDs[0], &wstatus3, 0);
@@ -263,9 +267,17 @@ int main()
         }
         else
         {
+            if (!hasPipe[0])
+            {
+                waitpid(childProcessIDs[0], &wstatus1, 0);
+            }
             if (hasPipe[0])
             {
                 waitpid(pipeProcessIDs[0], &wstatus3, 0);
+            }
+            if (!hasPipe[1])
+            {
+                waitpid(childProcessIDs[1], &wstatus2, 0);
             }
             if (hasPipe[1])
             {
