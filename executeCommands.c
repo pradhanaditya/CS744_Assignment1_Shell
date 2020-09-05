@@ -8,11 +8,18 @@
 
 int main(int argc, char *argv[])
 {
+    char *errorMessage = "Illegal command or arguments\n";
     char *fileContent = (void *) malloc(10000*sizeof(char));
     int fd = open(argv[1], O_RDONLY);
+
+    if (fd == -1)
+    {
+        write(STDERR_FILENO, errorMessage, strlen(errorMessage));
+        exit(0);
+    }
+
     read(fd, fileContent, 10000);
     char *command = strtok_r(fileContent, "[\n;]", &fileContent);
-    char *errorMessage = "Illegal command or arguments\n";
     char *environ[] = {NULL};
     
     while (command != NULL)
@@ -36,7 +43,7 @@ int main(int argc, char *argv[])
 
             if (isCommandValid == -1)
             {
-                write(STDOUT_FILENO, errorMessage, strlen(errorMessage));
+                write(STDERR_FILENO, errorMessage, strlen(errorMessage));
                 return 0;
             }
         }

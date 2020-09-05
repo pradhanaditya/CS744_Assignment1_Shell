@@ -1,2 +1,0 @@
-user mode cpu percentage: 0%
-system mode cpu percentage: 1.00125%

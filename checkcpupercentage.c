@@ -8,30 +8,12 @@
 
 extern int charToInteger(char c);
 
-enum fileDescriptors {STDIN = 0, STDOUT = 1, STDERR = 2};
-
 int main(int argc, char *argv[])
 {
     char *errorMessage = "Illegal command or arguments";
     char *newLine = "\n";
     char *statBuffer = (char *) calloc(1000, sizeof(char));
-    //char statBuffer[1000];
     char *statCPUBuffer = (char *) calloc(1000, sizeof(char));
-
-    /* Checking for a pipe and performing I/O redirection accordingly 
-    for (int i = 1; i < argc; i++)
-    {
-        if (strcmp(argv[i], "|") == 0)
-        {
-
-        }
-    }   */
-
-   /* if (argc > 2)
-    {
-        write(STDERR, (void *) errorMessage, strlen(errorMessage));
-        return 1;
-    } */
 
     char procDirectory1[50] = "/proc";
     char procDirectory2[50] = "/proc";
@@ -159,26 +141,27 @@ int main(int argc, char *argv[])
 
     cpuTime2 = cpuTime2 + tempCpuTime;
 
-    long long int numberOfProcessors = sysconf(_SC_NPROCESSORS_ONLN);
-
-    float userResult = (numberOfProcessors * (userTime2 - userTime1) * 100.0)/(cpuTime2 - cpuTime1);
-    float sysResult = (numberOfProcessors * (sysTime2 - sysTime1) * 100.0)/(cpuTime2 - cpuTime1);
+    float userResult = ((userTime2 - userTime1) * 100.0)/(cpuTime2 - cpuTime1);
+    float sysResult = ((sysTime2 - sysTime1) * 100.0)/(cpuTime2 - cpuTime1);
     
     char *userModeMessage = "user mode cpu percentage: ";
     char *sysModeMessage = "system mode cpu percentage: ";
 
     char *buf1 = (char *) calloc(10, sizeof(char));
     char *buf2 = (char *) calloc(10, sizeof(char));
-    gcvt(userResult, 6, buf1);
-    gcvt(sysResult, 6, buf2);
+    gcvt(userResult, 2, buf1);
+    gcvt(sysResult, 2, buf2);
     strcat(buf1, "%");
     strcat(buf2, "%");
-    write(STDOUT, userModeMessage, strlen(userModeMessage));
-    write(STDOUT, buf1, strlen(buf1));
-    write(STDOUT, newLine, strlen(newLine));
-    write(STDOUT, sysModeMessage, strlen(sysModeMessage));
-    write(STDOUT, buf2, strlen(buf2));
-    write(STDOUT, newLine, strlen(newLine));
-    
+    write(STDOUT_FILENO, userModeMessage, strlen(userModeMessage));
+    write(STDOUT_FILENO, buf1, strlen(buf1));
+    write(STDOUT_FILENO, newLine, strlen(newLine));
+    write(STDOUT_FILENO, sysModeMessage, strlen(sysModeMessage));
+    write(STDOUT_FILENO, buf2, strlen(buf2));
+    write(STDOUT_FILENO, newLine, strlen(newLine));
+    free(buf1);
+    free(buf2);
+    free(statBuffer);
+    free(statCPUBuffer);
     exit(0);
 }
